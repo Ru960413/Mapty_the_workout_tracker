@@ -1,0 +1,27 @@
+Some potential app improvements to implement:
+- Easy ones
+    1. ability to delete a workout
+    2. ability to edit a workout
+    3. ability to delete all workouts
+    4. Ability to sort workouts by a certain field
+    5. Re-build Running and Cycling objects coming from local storage
+    6. More realistic error and confirmation messages
+
+- Harder ones
+    7. Ability to position the map to show all workouts
+    8. Ability to draw lines and shapes instead of just points
+    9. Geocode location from coordinates
+    10. Display weather data for workout time and place
+
+--------------------------------------------------------------------
+
+The things I want to build:
+    1. delete workout
+    2. edit a workout
+    3. remove all workouts
+    4. Re-build Running and Cycling objects coming from local storage
+    5. More realistic error and confirmation messages
+
+Pending:
+    1. draw workout paths and ranges instead of just markers
+    2. sort workouts by a certain field
