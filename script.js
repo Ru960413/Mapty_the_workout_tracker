@@ -64,6 +64,13 @@ class Cycling extends Workout {
 //////////////////////////////////////
 // APPLICATION ARCHITECTURE
 
+// TO-DOs aka features to implement:
+// 1. delete workout
+// 2. edit a workout
+// 3. remove all workouts
+// 4. Re-build Running and Cycling objects coming from local storage
+// 5. More realistic error and confirmation messages
+
 const form = document.querySelector('.form');
 const containerWorkouts = document.querySelector('.workouts');
 const inputType = document.querySelector('.form__input--type');
@@ -120,7 +127,7 @@ class App {
     // add workout markers after the map is loaded
     this.#workouts.forEach(work => {
       this._renderWorkoutMarker(work);
-    })
+    });
   }
 
   _showForm(mapE) {
@@ -264,12 +271,12 @@ class App {
       <div class="workout__details">
         <span class="workout__icon">⚡️</span>
         <span class="workout__value">${workout.speed.toFixed(1)}</span>
-        <span class="workout__unit">km/h</span>
+        <span class="workout__unit">km/hr</span>
       </div>
       <div class="workout__details">
         <span class="workout__icon">⛰</span>
         <span class="workout__value">${workout.elevationGain}</span>
-        <span class="workout__unit">m</span>
+        <span class="workout__unit">M</span>
       </div>
     </li>
       `;
@@ -314,27 +321,13 @@ class App {
 
     this.#workouts.forEach(work => {
       this._renderWorkout(work);
-    })
+    });
   }
 
   reset() {
     localStorage.removeItem('workouts');
-    location.reload();
+    //location.reload();
   }
 }
 
 const app = new App();
-
-// Some potential app improvements to implement:
-// Easy ones
-// 1. ability to delete a workout
-// 2. ability to edit a workout
-// 3. Ability to sort workouts by a certain field
-// 4. Re-build Running and Cycling objects coming from local storage
-// 5. More realistic error and confirmation messages
-
-// Harder ones
-// 6. Ability to position the map to show all workouts
-// 7. Ability to draw lines and shapes instead of just points
-// 8. Geocode location from coordinates
-// 9. Display weather data for workout time and place
