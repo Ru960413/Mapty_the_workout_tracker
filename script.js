@@ -67,9 +67,8 @@ class Cycling extends Workout {
 // TO-DOs aka features to implement:
 // 1. delete workout
 // 2. edit a workout
-// 3. remove all workouts
-// 4. Re-build Running and Cycling objects coming from local storage
-// 5. More realistic error and confirmation messages
+// 3. remove all workouts DONE
+// 4. More realistic error and confirmation messages
 
 const form = document.querySelector('.form');
 const containerWorkouts = document.querySelector('.workouts');
@@ -78,12 +77,15 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
+//const deleteBtn = document.querySelector('.delete');
+//const editBtn = document.querySelector('.edit');
+const deleteAllBtn = document.querySelector('.delete_all');
 
 class App {
   #map;
   #mapEvent;
   #mapZoomLevel = 13;
-  #workouts = [];
+  workouts = [];
 
   constructor() {
     // Get user's position
@@ -101,7 +103,7 @@ class App {
       navigator.geolocation.getCurrentPosition(
         this._loadMap.bind(this),
         function () {
-          alert('Could not get your position');
+          alert('無法獲取您的位置🙁');
         }
       );
     }
@@ -125,7 +127,7 @@ class App {
     this.#map.on('click', this._showForm.bind(this));
 
     // add workout markers after the map is loaded
-    this.#workouts.forEach(work => {
+    this.workouts.forEach(work => {
       this._renderWorkoutMarker(work);
     });
   }
@@ -177,7 +179,7 @@ class App {
         !validInputs(distance, duration, cadence) ||
         !allPositive(distance, duration, cadence)
       )
-        return alert('Inputs have to be positive numbers');
+        return alert('請輸入正整數的數值');
 
       workout = new Running([lat, lng], distance, duration, cadence);
     }
@@ -190,13 +192,13 @@ class App {
         !validInputs(distance, duration, elevation) ||
         !allPositive(distance, duration, elevation)
       )
-        return alert('Inputs have to be positive numbers');
+        return alert('請輸入正整數的數值');
 
       workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
     // Add new Object to workout array
-    this.#workouts.push(workout);
+    this.workouts.push(workout);
     // console.log(workout);
 
     // Render workout on map as marker
@@ -241,12 +243,12 @@ class App {
           workout.type === 'running' ? '🏃‍♀️' : '🚴‍♀️'
         }</span>
         <span class="workout__value">${workout.distance}</span>
-        <span class="workout__unit">公里</span>
+        <span class="workout__unit">km</span>
       </div>
       <div class="workout__details">
         <span class="workout__icon">⏱</span>
         <span class="workout__value">${workout.duration}</span>
-        <span class="workout__unit">分鐘</span>
+        <span class="workout__unit">min</span>
       </div>
     `;
 
@@ -261,6 +263,8 @@ class App {
         <span class="workout__icon">🦶🏼</span>
         <span class="workout__value">${workout.cadence}</span>
         <span class="workout__unit">spm</span>
+        <div class="edit">Edit</div>
+        <div class="delete">X</div>
       </div>
     </li>
         `;
@@ -277,6 +281,8 @@ class App {
         <span class="workout__icon">⛰</span>
         <span class="workout__value">${workout.elevationGain}</span>
         <span class="workout__unit">M</span>
+        <div class="edit">Edit</div>
+        <div class="delete">X</div>
       </div>
     </li>
       `;
@@ -291,10 +297,10 @@ class App {
 
     if (!workoutEl) return;
 
-    const workout = this.#workouts.find(
+    const workout = this.workouts.find(
       work => work.id === workoutEl.dataset.id
     );
-    console.log(workout);
+    // console.log(workout);
 
     this.#map.setView(workout.coords, this.#mapZoomLevel, {
       animate: true,
@@ -307,7 +313,7 @@ class App {
   }
 
   _setLocalStorage() {
-    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+    localStorage.setItem('workouts', JSON.stringify(this.workouts));
   }
 
   // Will lost the original prototype chain
@@ -317,17 +323,74 @@ class App {
     if (!data) return;
 
     // restoring the data
-    this.#workouts = data;
+    this.workouts = data;
 
-    this.#workouts.forEach(work => {
+    this.workouts.forEach(work => {
       this._renderWorkout(work);
     });
-  }
-
-  reset() {
-    localStorage.removeItem('workouts');
-    //location.reload();
   }
 }
 
 const app = new App();
+
+//const workout = app.workouts;
+
+if (localStorage.getItem('workouts')) {
+  deleteAllBtn.style.display = 'flex';
+}
+
+function deleteAllWorkouts() {
+  if (confirm('您確定要刪除所有的健身紀錄嗎？')) {
+    localStorage.removeItem('workouts');
+    location.reload();
+    alert('健身紀錄已清空');
+  } else {
+    alert('已取消');
+  }
+}
+
+function deleteWorkout(e) {
+  if (confirm('您確定要刪除此健身紀錄嗎？')) {
+    const workoutEl = e.target.closest('.workout');
+    localStorage.getItem('workouts');
+    const workouts = JSON.parse(localStorage.getItem('workouts'));
+    for (let i = 0; i < workouts.length; i++) {
+      if ((workouts[i].id = workoutEl.getAttribute('data-id'))) {
+        workouts.splice(i, 1);
+        break;
+      }
+    }
+    localStorage.setItem('workouts', JSON.stringify(workouts));
+    location.reload();
+    alert('健身紀錄已成功刪除');
+  } else {
+    alert('已取消');
+  }
+}
+
+// function editWorkout(e) {
+//   const workoutEl = e.target.closest('.workout');
+//   const workouts = JSON.parse(localStorage.getItem('workouts'));
+//   const workout = workouts.find(work => work.id === workoutEl.dataset.id);
+//   console.log(workout.distance, workout.duration, workout.id, workout.type, workout.cadence||workout.elevationGain);
+//   // form.classList.remove('hidden');
+//   // if (workout.type === 'cycling') {
+//   //   inputDistance = workout.distance;
+//   //   inputDuration = workout.duration;
+//   //   inputElevation = workout.elevationGain;
+//   // }
+//   // else{
+//   //   inputDistance = workout.distance;
+//   //   inputDuration = workout.duration;
+//   //   inputCadence = workout.cadence;
+//   // }
+// }
+
+const deleteBtns = document.querySelectorAll('.delete');
+const editBtns = document.querySelectorAll('.edit');
+
+deleteAllBtn.addEventListener('click', deleteAllWorkouts);
+deleteBtns.forEach(deleteBtn =>
+  deleteBtn.addEventListener('click', deleteWorkout)
+);
+// editBtns.forEach(editBtn => editBtn.addEventListener('click', editWorkout));
