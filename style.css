@@ -6,7 +6,7 @@
   --color-dark--2: #42484d;
   --color-light--1: #aaa;
   --color-light--2: #ececec;
-  --color-light--3: rgb(214, 222, 224);
+  --color-light--3: #d6dee0;
 }
 
 * {
@@ -217,4 +217,42 @@ a:visited {
 }
 .cycling-popup .leaflet-popup-content-wrapper {
   border-left: 5px solid var(--color-brand--1);
+}
+
+.edit,
+.delete {
+  margin-left: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.edit {
+  padding: 5px;
+  color: #fff;
+  background-color: var(--color-dark--1);
+  text-transform: uppercase;
+  border: 1px solid #000;
+}
+
+.delete {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  background-color: red;
+  color: #000;
+}
+
+.delete_all{
+  display: none;
+  float: right;
+  padding: 10px;
+  background-color: lightgray;
+  text-transform: uppercase;
+  border: 1px solid #000;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
 }
