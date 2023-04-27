@@ -113,6 +113,22 @@ a:visited {
   font-weight: 800;
 }
 
+/* .form-edit{
+  display: none;
+  background-color: var(--color-dark--2);
+  border-radius: 5px;
+  padding: 1.5rem 2.75rem;
+  margin-bottom: 1.75rem;
+
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 2.5rem;
+
+  /* Match height and activity boxes 
+  height: 9.25rem;
+  transition: all 0.5s, transform 1ms;
+}
+*/
+
 .form {
   background-color: var(--color-dark--2);
   border-radius: 5px;
@@ -245,7 +261,7 @@ a:visited {
   color: #000;
 }
 
-.delete_all{
+.delete_all {
   display: none;
   float: right;
   padding: 10px;

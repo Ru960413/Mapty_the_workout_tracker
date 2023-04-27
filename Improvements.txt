@@ -16,11 +16,11 @@ Some potential app improvements to implement:
 --------------------------------------------------------------------
 
 The things I want to build:
-    1. delete workout
-    2. edit a workout
-    3. remove all workouts
+    1. delete workout (DONE)
+    2. edit a workout (Can't😭)
+    3. remove all workouts (DONE)
     4. Re-build Running and Cycling objects coming from local storage
-    5. More realistic error and confirmation messages
+    5. More realistic error and confirmation messages (DONE)
 
 Pending:
     1. draw workout paths and ranges instead of just markers
