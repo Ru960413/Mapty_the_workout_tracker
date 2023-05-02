@@ -19,8 +19,9 @@ The things I want to build:
     1. delete workout (DONE)
     2. edit a workout (Can't😭)
     3. remove all workouts (DONE)
-    4. Re-build Running and Cycling objects coming from local storage
+    4. Re-build Running and Cycling objects coming from local storage (DONE)
     5. More realistic error and confirmation messages (DONE)
+    6. Display weather data for workout time and place
 
 Pending:
     1. draw workout paths and ranges instead of just markers
