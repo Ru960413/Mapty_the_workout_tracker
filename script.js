@@ -66,10 +66,12 @@ class Cycling extends Workout {
 // APPLICATION ARCHITECTURE
 
 // TO-DOs aka features to implement:
-// 1. delete workout
-// 2. edit a workout
-// 3. remove all workouts DONE
-// 4. More realistic error and confirmation messages
+// 1. delete workout (DONE)
+// 2. edit a workout (Can't seem to figure this one out, next version maybe?)
+// 3. remove all workouts (DONE)
+// 4. More realistic error and confirmation messages (DONE)
+// 5. restore Running and Cycling Objects from localStorage
+// 6. Show weather for workout, using Weather API -> add temperature, humidity and weather(這個我還不會😅)
 
 const form = document.querySelector('.form');
 const formEdit = document.querySelector('.form-edit');
@@ -98,11 +100,13 @@ class App {
     // Get user's position
     this._getPosition();
     // Get data from local storage
+    this._restoreWorkoutAsObj();
     this._getLocalStorage();
     // Attach event handlers
     form.addEventListener('submit', this._newWorkOut.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopUp.bind(this));
+    this._getWeatherForWorkout();
   }
 
   _getPosition() {
@@ -147,7 +151,7 @@ class App {
 
   _showEditForm(mapE) {
     this.#mapEvent = mapE;
-    formEdit.style.display= 'grid';
+    formEdit.style.display = 'grid';
     inputDistance.focus();
   }
 
@@ -181,9 +185,6 @@ class App {
 
   _newWorkOut(e) {
     e.preventDefault();
-    // const validInputs = (...inputs) =>
-    //   inputs.every(input => Number.isFinite(input));
-    // const allPositive = (...inputs) => inputs.every(input => input > 0);
     // Get data from form
     const type = inputType.value;
     const distance = +inputDistance.value;
@@ -214,7 +215,7 @@ class App {
       const elevation = +inputElevation.value;
       if (
         !validInputs(distance, duration, elevation) ||
-        !allPositive(distance, duration, elevation)
+        !allPositiveNum(distance, duration, elevation)
       )
         return alert('請輸入正數');
 
@@ -287,7 +288,6 @@ class App {
         <span class="workout__icon">🦶🏼</span>
         <span class="workout__value">${workout.cadence}</span>
         <span class="workout__unit">spm</span>
-        <div class="edit">Edit</div>
         <div class="delete">X</div>
       </div>
     </li>
@@ -305,7 +305,6 @@ class App {
         <span class="workout__icon">⛰</span>
         <span class="workout__value">${workout.elevationGain}</span>
         <span class="workout__unit">M</span>
-        <div class="edit">Edit</div>
         <div class="delete">X</div>
       </div>
     </li>
@@ -332,8 +331,6 @@ class App {
         duration: 1,
       },
     });
-    // workout.click();
-    // console.log(workout.clicks);
   }
 
   _setLocalStorage() {
@@ -352,6 +349,40 @@ class App {
     this.workouts.forEach(work => {
       this._renderWorkout(work);
     });
+  }
+
+  _restoreWorkoutAsObj() {
+    let cycling = JSON.parse(localStorage.getItem('workouts'))
+      .filter(workout => workout.type === 'cycling')
+      .map(
+        workout =>
+          new Cycling(
+            workout.coords,
+            workout.distance,
+            workout.duration,
+            workout.date,
+            workout.id,
+            workout.elevationGain
+          )
+      );
+    let running = JSON.parse(localStorage.getItem('workouts'))
+      .filter(workout => workout.type === 'running')
+      .map(
+        workout =>
+          new Running(
+            workout.coords,
+            workout.distance,
+            workout.duration,
+            workout.date,
+            workout.id,
+            workout.cadence
+          )
+      );
+    console.log(cycling, running);
+  }
+
+  _getWeatherForWorkout(e) {
+    // using lat, lng to get current time's temperature, humidity and weather
   }
 }
 
@@ -403,17 +434,17 @@ function deleteWorkout(e) {
 //   const elevationGain = +inputElevation.value;
 //   console.log(distance, duration, cadence, elevationGain);
 
-  // workout.distance = distance;
-  // workout.duration = duration;
-  // workout.coords = workout.coords;
+// workout.distance = distance;
+// workout.duration = duration;
+// workout.coords = workout.coords;
 
-  // if (workout.type === 'running') {
-  //   workout.cadence = cadence;
-  // } else {
-  //   workouts.elevationGain = elevationGain;
-  // }
+// if (workout.type === 'running') {
+//   workout.cadence = cadence;
+// } else {
+//   workouts.elevationGain = elevationGain;
+// }
 
-  // app._hideEditForm();
+// app._hideEditForm();
 //}
 
 const deleteBtns = document.querySelectorAll('.delete');
