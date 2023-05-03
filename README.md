@@ -9,10 +9,6 @@
 
 ## 我的網站
 
-<https://maptytheworkouttracker-production.up.railway.app/>
-
-![Welcome Page](pics/welcomePage.png 'Welcome Page')
-
 ### 所使用的技術
 
     1. HTML
