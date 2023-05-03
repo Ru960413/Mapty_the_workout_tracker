@@ -14,11 +14,11 @@
     1. HTML
     2. CSS
     3. JavaScript
-    4. Railway(Deployment)
+    4. localStorage API
 
 ### 專案介紹
 
-這是一個由 HTML, CSS 以及 JavaScript 所寫成健身紀錄地圖，使用者可點選地圖紀錄健身（可支援跑步及騎腳踏車兩項），並將這些紀錄儲存在 localStorage 之中，，除此之外亦可以刪除單一健身紀錄以及刪除所有健身紀錄。
+這是一個由 HTML, CSS 以及 JavaScript 所寫成離線的健身紀錄地圖，使用者可點選地圖紀錄健身（可支援跑步及騎腳踏車兩項），並將這些紀錄儲存在 localStorage 之中，除此之外亦可以刪除單一健身紀錄以及刪除所有健身紀錄。
 
 ### 動機及 project 設計
 
