@@ -9,6 +9,8 @@
 
 ## 我的網站
 
+<https://maptytheworkouttracker-production.up.railway.app/>
+
 ### 所使用的技術
 
     1. HTML
@@ -18,11 +20,11 @@
 
 ### 專案介紹
 
-這是一個由 HTML, CSS 以及 JavaScript 所寫成離線的健身紀錄地圖，使用者可點選地圖紀錄健身（可支援跑步及騎腳踏車兩項），並將這些紀錄儲存在 localStorage 之中，除此之外亦可以刪除單一健身紀錄以及刪除所有健身紀錄。
+這是一個由 HTML, CSS 以及 JavaScript 所寫成的健身紀錄地圖，使用者可點選地圖紀錄健身（可支援跑步及騎腳踏車兩項），並將這些紀錄儲存在 localStorage 之中，除此之外亦可以刪除單一健身紀錄以及刪除所有健身紀錄。
 
 ### 動機及 project 設計
 
-這是在上 Udemey 平台上的 Jonas Schmedtmann 所開設的 JavaScript 課程之中 JavaScript OOP 的課程裡的專案之一，在上課時只有做到添加新健身紀錄以及點選左側的健身紀錄將 marker 置於地圖的正中心，而我則是另外寫了其他的功能，這些功能包括：刪除單一健身紀錄、刪除所有健身紀錄、專案中文化、由 localStorage 之中將健身紀錄回復成最原始的物件（Running 與 Cycling）等。
+這是在上 Udemey 平台上的老師 Jonas Schmedtmann 所開設的 JavaScript 課程之中 JavaScript OOP 的課程裡的 project，在上課時只有做到添加新健身紀錄以及點選左側的健身紀錄將 marker 置於地圖的正中心，而我則另外寫了一些其他的功能，這些功能包括：刪除單一健身紀錄、刪除所有健身紀錄、project 中文化、由 localStorage 之中將健身紀錄回復成最原始的物件（Running 與 Cycling）等。
 
 ### 專案重點
 
