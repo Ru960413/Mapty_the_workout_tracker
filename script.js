@@ -351,39 +351,39 @@ class App {
     });
   }
 
-  _restoreWorkoutAsObj() {
-    let cycling = JSON.parse(localStorage.getItem('workouts'))
-      .filter(workout => workout.type === 'cycling')
-      .map(
-        workout =>
-          new Cycling(
-            workout.coords,
-            workout.distance,
-            workout.duration,
-            workout.date,
-            workout.id,
-            workout.elevationGain
-          )
-      );
-    let running = JSON.parse(localStorage.getItem('workouts'))
-      .filter(workout => workout.type === 'running')
-      .map(
-        workout =>
-          new Running(
-            workout.coords,
-            workout.distance,
-            workout.duration,
-            workout.date,
-            workout.id,
-            workout.cadence
-          )
-      );
-    console.log(cycling, running);
-  }
+  // _restoreWorkoutAsObj() {
+  //   let cycling = JSON.parse(localStorage.getItem('workouts'))
+  //     .filter(workout => workout.type === 'cycling')
+  //     .map(
+  //       workout =>
+  //         new Cycling(
+  //           workout.coords,
+  //           workout.distance,
+  //           workout.duration,
+  //           workout.date,
+  //           workout.id,
+  //           workout.elevationGain
+  //         )
+  //     );
+  //   let running = JSON.parse(localStorage.getItem('workouts'))
+  //     .filter(workout => workout.type === 'running')
+  //     .map(
+  //       workout =>
+  //         new Running(
+  //           workout.coords,
+  //           workout.distance,
+  //           workout.duration,
+  //           workout.date,
+  //           workout.id,
+  //           workout.cadence
+  //         )
+  //     );
+  //   console.log(cycling, running);
+  // }
 
-  _getWeatherForWorkout(e) {
-    // using lat, lng to get current time's temperature, humidity and weather
-  }
+  // _getWeatherForWorkout(e) {
+  //   // using lat, lng to get current time's temperature, humidity and weather
+  // }
 }
 
 const app = new App();
