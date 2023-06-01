@@ -99,8 +99,8 @@ class App {
   constructor() {
     // Get user's position
     this._getPosition();
+    // this._restoreWorkoutAsObj();
     // Get data from local storage
-    this._restoreWorkoutAsObj();
     this._getLocalStorage();
     // Attach event handlers
     form.addEventListener('submit', this._newWorkOut.bind(this));
