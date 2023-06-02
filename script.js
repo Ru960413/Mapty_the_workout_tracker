@@ -1,10 +1,15 @@
-'use strict';
-//import { validInputs, allPositiveNum } from 'helper.js';
+import { validInputs, allPositiveNum, getCurrentWeather } from './helper.js';
+
+// TO-DO:
+// 1. fix cadence and elevationGain in restoreWorkoutAsObj
+// 2. add weather data to Running and Cycling constructor, and render them in html
+// 3. make deleteWorkout work again
+// 4. work on edit workout function
+// 5. final check before re-deploy
 
 class Workout {
   date = new Date();
   id = (Date.now() + '').slice(-10);
-  clicks = 0;
 
   constructor(coords, distance, duration) {
     this.coords = coords; // [lat, lng]
@@ -20,10 +25,6 @@ class Workout {
       months[this.date.getMonth()]
     }${this.date.getDate()}日 ${this.name}`;
   }
-
-  click() {
-    this.clicks++;
-  }
 }
 
 class Running extends Workout {
@@ -34,11 +35,16 @@ class Running extends Workout {
     this.cadence = cadence;
     this.calcPace();
     this._setDescription();
+    this._renderCurrentWeatherForWorkout();
   }
   calcPace() {
     // min/km
     this.pace = this.duration / this.distance;
     return this.pace;
+  }
+  _renderCurrentWeatherForWorkout() {
+    // using lat, lng to get current time's temperature, humidity and weather
+    getCurrentWeather(this.coords[0], this.coords[1]);
   }
 }
 
@@ -50,11 +56,16 @@ class Cycling extends Workout {
     this.elevationGain = elevationGain;
     this.calcSpeed();
     this._setDescription();
+    this._renderCurrentWeatherForWorkout();
   }
   calcSpeed() {
     // km/h
     this.speed = this.distance / (this.duration / 60);
     return this.speed;
+  }
+  _renderCurrentWeatherForWorkout() {
+    // using lat, lng to get current time's temperature, humidity and weather
+    getCurrentWeather(this.coords[0], this.coords[1]);
   }
 }
 
@@ -70,7 +81,7 @@ class Cycling extends Workout {
 // 2. edit a workout (Can't seem to figure this one out, next version maybe?)
 // 3. remove all workouts (DONE)
 // 4. More realistic error and confirmation messages (DONE)
-// 5. restore Running and Cycling Objects from localStorage
+// 5. restore Running and Cycling Objects from localStorage (DONE)
 // 6. Show weather for workout, using Weather API -> add temperature, humidity and weather(這個我還不會😅)
 
 const form = document.querySelector('.form');
@@ -81,14 +92,9 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
-//const deleteBtn = document.querySelector('.delete');
-//const editBtn = document.querySelector('.edit');
-const deleteAllBtn = document.querySelector('.delete_all');
-
-const validInputs = (...inputs) =>
-  inputs.every(input => Number.isFinite(input));
-
-const allPositiveNum = (...inputs) => inputs.every(input => input > 0);
+const deleteAllBtn = document.querySelector('.delete_all_inactive');
+const deleteBtns = document.querySelectorAll('.delete');
+//const editBtns = document.querySelectorAll('.edit');
 
 class App {
   #map;
@@ -99,14 +105,14 @@ class App {
   constructor() {
     // Get user's position
     this._getPosition();
-    // this._restoreWorkoutAsObj();
+    this._restoreWorkoutAsObj();
     // Get data from local storage
     this._getLocalStorage();
     // Attach event handlers
     form.addEventListener('submit', this._newWorkOut.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopUp.bind(this));
-    this._getWeatherForWorkout();
+    // this._getWeatherForWorkout();
   }
 
   _getPosition() {
@@ -198,9 +204,6 @@ class App {
       // Check if data is valid
 
       if (
-        // !Number.isFinite(distance) ||
-        // !Number.isFinite(duration) ||
-        // !Number.isFinite(cadence)
         !validInputs(distance, duration, cadence) ||
         !allPositiveNum(distance, duration, cadence)
       )
@@ -351,45 +354,44 @@ class App {
     });
   }
 
-  // _restoreWorkoutAsObj() {
-  //   let cycling = JSON.parse(localStorage.getItem('workouts'))
-  //     .filter(workout => workout.type === 'cycling')
-  //     .map(
-  //       workout =>
-  //         new Cycling(
-  //           workout.coords,
-  //           workout.distance,
-  //           workout.duration,
-  //           workout.date,
-  //           workout.id,
-  //           workout.elevationGain
-  //         )
-  //     );
-  //   let running = JSON.parse(localStorage.getItem('workouts'))
-  //     .filter(workout => workout.type === 'running')
-  //     .map(
-  //       workout =>
-  //         new Running(
-  //           workout.coords,
-  //           workout.distance,
-  //           workout.duration,
-  //           workout.date,
-  //           workout.id,
-  //           workout.cadence
-  //         )
-  //     );
-  //   console.log(cycling, running);
-  // }
-
-  // _getWeatherForWorkout(e) {
-  //   // using lat, lng to get current time's temperature, humidity and weather
-  // }
+  _restoreWorkoutAsObj() {
+    let workouts = JSON.parse(localStorage.getItem('workouts'));
+    let cycling = workouts
+      ?.filter(workout => workout.type === 'cycling')
+      .map(
+        workout =>
+          new Cycling(
+            workout.coords,
+            workout.distance,
+            workout.duration,
+            workout.date,
+            workout.id,
+            workout.elevationGain //incorrect FIX THIS
+          )
+      );
+    let running = workouts
+      ?.filter(workout => workout.type === 'running')
+      .map(
+        workout =>
+          new Running(
+            workout.coords,
+            workout.distance,
+            workout.duration,
+            workout.date,
+            workout.id,
+            workout.cadence //incorrect FIX THIS
+          )
+      );
+    // console.log(cycling, running);
+  }
 }
 
 const app = new App();
 
-if (localStorage.getItem('workouts')) {
-  deleteAllBtn.style.display = 'flex';
+let workouts = JSON.parse(localStorage.getItem('workouts'));
+if (workouts?.length > 0) {
+  deleteAllBtn.classList.remove('delete_all_inactive');
+  deleteAllBtn.classList.add('delete_all_active');
 }
 
 function deleteAllWorkouts() {
@@ -447,8 +449,6 @@ function deleteWorkout(e) {
 // app._hideEditForm();
 //}
 
-const deleteBtns = document.querySelectorAll('.delete');
-//const editBtns = document.querySelectorAll('.edit');
 deleteAllBtn.addEventListener('click', deleteAllWorkouts);
 deleteBtns.forEach(deleteBtn =>
   deleteBtn.addEventListener('click', deleteWorkout)
