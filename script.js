@@ -1,8 +1,8 @@
 import { validInputs, allPositiveNum } from './helper.js';
 
 // TO-DO:
-// 1. fix cadence and elevationGain in restoreWorkoutAsObj
-// 2. add weather data to Running and Cycling constructor, and render them in html FINISHED, but have some issue...
+// 1. fix incorrect values of cadence and elevationGain in restoreWorkoutAsObj
+// DONE 2. add weather data to Running and Cycling constructor, and render them in html
 // 3. make deleteWorkout work again
 // 4. work on edit workout function
 // 5. final check before re-deploy
@@ -102,7 +102,7 @@ class Cycling extends Workout {
 // 3. remove all workouts (DONE)
 // 4. More realistic error and confirmation messages (DONE)
 // 5. restore Running and Cycling Objects from localStorage (DONE)
-// 6. Show weather for workout, using Weather API -> add temperature, humidity and weather
+// 6. Show weather for workout, using Weather API -> add temperature, humidity and weather (DONE)
 
 const form = document.querySelector('.form');
 const formEdit = document.querySelector('.form-edit');
@@ -278,8 +278,8 @@ class App {
     // Hide form and Clear input fields
     this._hideForm();
 
-    // ISSUE => api will be called every time the page reloads, so probably should use history api instead?
-    // <SOLVED: using settimeout> weather data can be stored in workout array, but weather data cannot be stored in localStorage 
+    // <SOLVED: using settimeout> weather data can be stored in workout array, but weather data cannot be stored in localStorage
+    // ISSUE => api will be called every time the page reloads, so probably should use history api instead? Nope, it won't
 
     // store workouts in local storage
     setTimeout(() => this._setLocalStorage(), 3000);
@@ -325,6 +325,7 @@ class App {
         <span class="workout__value">${workout.humidity}</span>
         <span class="workout__unit">%</span>
       </div>
+      <br/>
       <div class="workout__details">
         <span class="workout__icon">${
           workout.type === 'running' ? '🏃‍♀️' : '🚴‍♀️'
