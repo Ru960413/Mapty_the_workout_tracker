@@ -1,8 +1,8 @@
-import { validInputs, allPositiveNum, getCurrentWeather } from './helper.js';
+import { validInputs, allPositiveNum } from './helper.js';
 
 // TO-DO:
 // 1. fix cadence and elevationGain in restoreWorkoutAsObj
-// 2. add weather data to Running and Cycling constructor, and render them in html
+// 2. add weather data to Running and Cycling constructor, and render them in html FINISHED, but have some issue...
 // 3. make deleteWorkout work again
 // 4. work on edit workout function
 // 5. final check before re-deploy
@@ -35,16 +35,28 @@ class Running extends Workout {
     this.cadence = cadence;
     this.calcPace();
     this._setDescription();
-    this._renderCurrentWeatherForWorkout();
+    this._renderCurrentWeatherForWorkout(this.coords[0], this.coords[1]);
   }
   calcPace() {
     // min/km
     this.pace = this.duration / this.distance;
     return this.pace;
   }
+
   _renderCurrentWeatherForWorkout() {
     // using lat, lng to get current time's temperature, humidity and weather
-    getCurrentWeather(this.coords[0], this.coords[1]);
+    let api_key = '28dd70395bba4363b5f52413230205';
+    fetch(
+      `http://api.weatherapi.com/v1/current.json?key=${api_key}&q=${this.coords[0]},${this.coords[1]}`
+    )
+      .then(res => res.json())
+      .then(data => {
+        this.temp_c = data.current.temp_c;
+        this.feelsLike_c = data.current.feelslike_c;
+        this.humidity = data.current.humidity;
+        // console.log(this.temp_c, this.feelsLike_c, this.humidity);
+      });
+    return this.temp_c, this.feelsLike_c, this.humidity;
   }
 }
 
@@ -56,22 +68,30 @@ class Cycling extends Workout {
     this.elevationGain = elevationGain;
     this.calcSpeed();
     this._setDescription();
-    this._renderCurrentWeatherForWorkout();
+    this._renderCurrentWeatherForWorkout(this.coords[0], this.coords[1]);
   }
   calcSpeed() {
     // km/h
     this.speed = this.distance / (this.duration / 60);
     return this.speed;
   }
+
   _renderCurrentWeatherForWorkout() {
     // using lat, lng to get current time's temperature, humidity and weather
-    getCurrentWeather(this.coords[0], this.coords[1]);
+    let api_key = '28dd70395bba4363b5f52413230205';
+    fetch(
+      `http://api.weatherapi.com/v1/current.json?key=${api_key}&q=${this.coords[0]},${this.coords[1]}`
+    )
+      .then(res => res.json())
+      .then(data => {
+        this.temp_c = data.current.temp_c;
+        this.feelsLike_c = data.current.feelslike_c;
+        this.humidity = data.current.humidity;
+        // console.log(this.temp_c, this.feelsLike_c, this.humidity);
+      });
+    return this.temp_c, this.feelsLike_c, this.humidity;
   }
 }
-
-// const run1 = new Running([120, 24], 5.2, 24, 178)
-// const cycling1 = new Cycling([120, 24], 27, 95, 523)
-// console.log(run1, cycling1);
 
 //////////////////////////////////////
 // APPLICATION ARCHITECTURE
@@ -82,7 +102,7 @@ class Cycling extends Workout {
 // 3. remove all workouts (DONE)
 // 4. More realistic error and confirmation messages (DONE)
 // 5. restore Running and Cycling Objects from localStorage (DONE)
-// 6. Show weather for workout, using Weather API -> add temperature, humidity and weather(這個我還不會😅)
+// 6. Show weather for workout, using Weather API -> add temperature, humidity and weather
 
 const form = document.querySelector('.form');
 const formEdit = document.querySelector('.form-edit');
@@ -112,7 +132,6 @@ class App {
     form.addEventListener('submit', this._newWorkOut.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopUp.bind(this));
-    // this._getWeatherForWorkout();
   }
 
   _getPosition() {
@@ -196,6 +215,9 @@ class App {
     const distance = +inputDistance.value;
     const duration = +inputDuration.value;
     const { lat, lng } = this.#mapEvent.latlng;
+    const temp_c = this.temp_c;
+    const feelsLike_c = this.feelsLike_c;
+    const humidity = this.humidity;
     let workout;
 
     // If workout is running, then create a running object
@@ -209,7 +231,16 @@ class App {
       )
         return alert('請輸入正數');
 
-      workout = new Running([lat, lng], distance, duration, cadence);
+      workout = new Running(
+        [lat, lng],
+        distance,
+        duration,
+        cadence,
+        temp_c,
+        feelsLike_c,
+        humidity
+      );
+      console.log(workout);
     }
 
     // else create a cycling object
@@ -222,24 +253,37 @@ class App {
       )
         return alert('請輸入正數');
 
-      workout = new Cycling([lat, lng], distance, duration, elevation);
+      workout = new Cycling(
+        [lat, lng],
+        distance,
+        duration,
+        elevation,
+        temp_c,
+        feelsLike_c,
+        humidity
+      );
+      console.log(workout);
     }
-
     // Add new Object to workout array
     this.workouts.push(workout);
-    // console.log(workout);
+    console.log(this.workouts);
 
     // Render workout on map as marker
     this._renderWorkoutMarker(workout);
-    this._renderWorkout(workout);
+    setTimeout(() => this._renderWorkout(workout), 2000);
+    // this._renderWorkout(workout);
 
     // Render workout on list
 
     // Hide form and Clear input fields
     this._hideForm();
 
+    // ISSUE => api will be called every time the page reloads, so probably should use history api instead?
+    // <SOLVED: using settimeout> weather data can be stored in workout array, but weather data cannot be stored in localStorage 
+
     // store workouts in local storage
-    this._setLocalStorage();
+    setTimeout(() => this._setLocalStorage(), 3000);
+    // this._setLocalStorage();
   }
 
   _renderWorkoutMarker(workout) {
@@ -266,6 +310,21 @@ class App {
     let html = `
     <li class="workout workout--${workout.type}" data-id="${workout.id}">
       <h2 class="workout__title">${workout.description}</h2>
+      <div class="workout__details">
+        <span class="workout__icon">🌡️</span>
+        <span class="workout__value">${workout.temp_c}</span>
+        <span class="workout__unit">°C</span>
+      </div>
+      <div class="workout__details">
+        <span class="workout__value">體感🌡️</span>
+        <span class="workout__value">${workout.feelsLike_c}</span>
+        <span class="workout__unit">°C</span>
+      </div>
+      <div class="workout__details">
+        <span class="workout__value">濕度</span>
+        <span class="workout__value">${workout.humidity}</span>
+        <span class="workout__unit">%</span>
+      </div>
       <div class="workout__details">
         <span class="workout__icon">${
           workout.type === 'running' ? '🏃‍♀️' : '🚴‍♀️'
@@ -337,6 +396,7 @@ class App {
   }
 
   _setLocalStorage() {
+    console.log(this.workouts);
     localStorage.setItem('workouts', JSON.stringify(this.workouts));
   }
 
