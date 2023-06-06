@@ -106,7 +106,6 @@ class App {
     form.addEventListener('submit', this._newWorkOut.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopUp.bind(this));
-    this._getWeatherForWorkout();
   }
 
   _getPosition() {
@@ -381,9 +380,6 @@ class App {
   //   console.log(cycling, running);
   // }
 
-  // _getWeatherForWorkout(e) {
-  //   // using lat, lng to get current time's temperature, humidity and weather
-  // }
 }
 
 const app = new App();
