@@ -114,6 +114,7 @@ const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 const deleteAllBtn = document.querySelector('.delete_all_inactive');
 const deleteBtns = document.querySelectorAll('.delete');
+const deleteBtn = document.querySelector('.delete');
 //const editBtns = document.querySelectorAll('.edit');
 
 class App {
@@ -311,21 +312,20 @@ class App {
     <li class="workout workout--${workout.type}" data-id="${workout.id}">
       <h2 class="workout__title">${workout.description}</h2>
       <div class="workout__details">
-        <span class="workout__icon">🌡️</span>
+        <span class="workout__info__title__chinese">🌡️</span>
         <span class="workout__value">${workout.temp_c}</span>
         <span class="workout__unit">°C</span>
       </div>
       <div class="workout__details">
-        <span class="workout__value">體感🌡️</span>
+        <span class="workout__info__title__chinese">體感🌡️</span>
         <span class="workout__value">${workout.feelsLike_c}</span>
         <span class="workout__unit">°C</span>
       </div>
       <div class="workout__details">
-        <span class="workout__value">濕度</span>
+        <span class="workout__info__title__chinese">濕度</span>
         <span class="workout__value">${workout.humidity}</span>
         <span class="workout__unit">%</span>
       </div>
-      <br/>
       <div class="workout__details">
         <span class="workout__icon">${
           workout.type === 'running' ? '🏃‍♀️' : '🚴‍♀️'
@@ -351,8 +351,8 @@ class App {
         <span class="workout__icon">🦶🏼</span>
         <span class="workout__value">${workout.cadence}</span>
         <span class="workout__unit">spm</span>
-        <div class="delete">X</div>
       </div>
+      <div class="delete">X</div>
     </li>
         `;
     }
@@ -368,8 +368,8 @@ class App {
         <span class="workout__icon">⛰</span>
         <span class="workout__value">${workout.elevationGain}</span>
         <span class="workout__unit">M</span>
-        <div class="delete">X</div>
       </div>
+      <div class="delete">X</div>
     </li>
       `;
     }
@@ -468,7 +468,6 @@ function deleteAllWorkouts() {
 function deleteWorkout(e) {
   if (confirm('您確定要刪除此健身紀錄嗎？')) {
     const workoutEl = e.target.closest('.workout');
-    localStorage.getItem('workouts');
     const workouts = JSON.parse(localStorage.getItem('workouts'));
     for (let i = 0; i < workouts.length; i++) {
       if ((workouts[i].id = workoutEl.getAttribute('data-id'))) {
@@ -511,7 +510,13 @@ function deleteWorkout(e) {
 //}
 
 deleteAllBtn.addEventListener('click', deleteAllWorkouts);
-deleteBtns.forEach(deleteBtn =>
-  deleteBtn.addEventListener('click', deleteWorkout)
-);
+// deleteBtns.forEach(deleteBtn =>
+//   deleteBtn.addEventListener('click', deleteWorkout)
+// );
+// deleteBtn.addEventListener('click', deleteWorkout);
+
+// deleteBtn?.addEventListener('click', function () {
+//   setTimeout(() => deleteWorkout, 3000);
+// });
+
 //editBtns.forEach(editBtn => editBtn.addEventListener('click', editWorkout));
