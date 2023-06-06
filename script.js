@@ -83,7 +83,7 @@ class Cycling extends Workout {
     // using lat, lng to get current time's temperature, humidity and weather
     let api_key = '28dd70395bba4363b5f52413230205';
     fetch(
-      `http://api.weatherapi.com/v1/current.json?key=${api_key}&q=${this.coords[0]},${this.coords[1]}`
+      `https://api.weatherapi.com/v1/current.json?key=${api_key}&q=${this.coords[0]},${this.coords[1]}`
     )
       .then(res => res.json())
       .then(data => {
