@@ -106,6 +106,11 @@ a:visited {
   margin-right: 0.5rem;
 }
 
+.workout__info__title__chinese {
+  font-size: 1.3rem;
+  margin-right: 0.5rem;
+}
+
 .workout__unit {
   font-size: 1.1rem;
   color: var(--color-light--1);
@@ -252,14 +257,24 @@ a:visited {
   border: 1px solid #000;
 }
 
-.delete {
+/* .delete {
   border-radius: 50%;
   width: 24px;
   height: 24px;
   text-align: center;
   background-color: red;
   color: #000;
-}
+  float: right;
+  margin-left: -1.5rem;
+} */
+
+.delete {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  background-color: red;
+  color: #000;}
 
 .delete_all_inactive {
   display: none;
