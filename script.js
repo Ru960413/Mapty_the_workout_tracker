@@ -1,10 +1,10 @@
 import { validInputs, allPositiveNum } from './helper.js';
 
 // TO-DO:
-// 1. fix incorrect values of cadence and elevationGain in restoreWorkoutAsObj
-// DONE 2. add weather data to Running and Cycling constructor, and render them in html
-// 3. make deleteWorkout work again
-// 4. work on edit workout function
+// <DONE> 1. fix incorrect values of cadence and elevationGain in restoreWorkoutAsObj <had some assignment issue>
+// <DONE> 2. add weather data to Running and Cycling constructor, and render them in html
+// <DONE> 3. make deleteWorkout work again
+// 4. try implement edit workout feature (version 3)
 // 5. final check before re-deploy
 
 class Workout {
@@ -23,7 +23,9 @@ class Workout {
 
     this.description = `${
       months[this.date.getMonth()]
-    }${this.date.getDate()}日 ${this.name}`;
+    }${this.date.getDate()}日 ${this.date.getHours()}:${this.date.getMinutes()} ${
+      this.name
+    }`;
   }
 }
 
@@ -51,6 +53,7 @@ class Running extends Workout {
     )
       .then(res => res.json())
       .then(data => {
+        console.log(data);
         this.temp_c = data.current.temp_c;
         this.feelsLike_c = data.current.feelslike_c;
         this.humidity = data.current.humidity;
@@ -113,9 +116,6 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 const deleteAllBtn = document.querySelector('.delete_all_inactive');
-const deleteBtns = document.querySelectorAll('.delete');
-const deleteBtn = document.querySelector('.delete');
-//const editBtns = document.querySelectorAll('.edit');
 
 class App {
   #map;
@@ -175,11 +175,11 @@ class App {
     inputDistance.focus();
   }
 
-  _showEditForm(mapE) {
-    this.#mapEvent = mapE;
-    formEdit.style.display = 'grid';
-    inputDistance.focus();
-  }
+  // _showEditForm(mapE) {
+  //   this.#mapEvent = mapE;
+  //   formEdit.style.display = 'grid';
+  //   inputDistance.focus();
+  // }
 
   _hideForm() {
     // Empty inputs
@@ -193,16 +193,16 @@ class App {
     setTimeout(() => (form.style.display = 'grid'), 1000);
   }
 
-  _hideEditForm() {
-    // Empty inputs
-    inputDistance.value =
-      inputDuration.value =
-      inputCadence.value =
-      inputDuration.value =
-        '';
-    formEdit.style.display = 'none';
-    setTimeout(() => (formEdit.style.display = 'grid'), 1000);
-  }
+  // _hideEditForm() {
+  //   // Empty inputs
+  //   inputDistance.value =
+  //     inputDuration.value =
+  //     inputCadence.value =
+  //     inputDuration.value =
+  //       '';
+  //   formEdit.style.display = 'none';
+  //   setTimeout(() => (formEdit.style.display = 'grid'), 1000);
+  // }
 
   _toggleElevationField() {
     inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
@@ -241,7 +241,6 @@ class App {
         feelsLike_c,
         humidity
       );
-      console.log(workout);
     }
 
     // else create a cycling object
@@ -263,11 +262,9 @@ class App {
         feelsLike_c,
         humidity
       );
-      console.log(workout);
     }
     // Add new Object to workout array
     this.workouts.push(workout);
-    console.log(this.workouts);
 
     // Render workout on map as marker
     this._renderWorkoutMarker(workout);
@@ -397,7 +394,7 @@ class App {
   }
 
   _setLocalStorage() {
-    console.log(this.workouts);
+    // console.log(this.workouts);
     localStorage.setItem('workouts', JSON.stringify(this.workouts));
   }
 
@@ -425,9 +422,10 @@ class App {
             workout.coords,
             workout.distance,
             workout.duration,
-            workout.date,
-            workout.id,
-            workout.elevationGain //incorrect FIX THIS
+            workout.elevationGain, //<SOLVED>
+            workout.feelsLike_c,
+            workout.humidity,
+            workout.temp_c
           )
       );
     let running = workouts
@@ -438,9 +436,10 @@ class App {
             workout.coords,
             workout.distance,
             workout.duration,
-            workout.date,
-            workout.id,
-            workout.cadence //incorrect FIX THIS
+            workout.cadence, //<SOLVED>
+            workout.feelsLike_c,
+            workout.humidity,
+            workout.temp_c
           )
       );
     // console.log(cycling, running);
@@ -468,13 +467,9 @@ function deleteAllWorkouts() {
 function deleteWorkout(e) {
   if (confirm('您確定要刪除此健身紀錄嗎？')) {
     const workoutEl = e.target.closest('.workout');
-    const workouts = JSON.parse(localStorage.getItem('workouts'));
-    for (let i = 0; i < workouts.length; i++) {
-      if ((workouts[i].id = workoutEl.getAttribute('data-id'))) {
-        workouts.splice(i, 1);
-        break;
-      }
-    }
+    let workouts = JSON.parse(localStorage.getItem('workouts'));
+    let id = workoutEl.getAttribute('data-id');
+    workouts = workouts.filter(workout => workout.id != id);
     localStorage.setItem('workouts', JSON.stringify(workouts));
     location.reload();
     alert('健身紀錄已成功刪除');
@@ -483,40 +478,60 @@ function deleteWorkout(e) {
   }
 }
 
+// const editInputType = document.querySelector('.edit__form__input--type');
+// const editInputDistance = document.querySelector(
+//   '.edit__form__input--distance'
+// );
+// const editInputDuration = document.querySelector(
+//   '.edit__form__input--duration'
+// );
+// const editInputCadence = document.querySelector('.edit__form__input--cadence');
+// const editInputElevation = document.querySelector(
+//   '.edit__form__input--elevation'
+// );
+
 // function editWorkout(e) {
+//   e.preventDefault();
+//   // find the data-id of the closest workout element
 //   const workoutEl = e.target.closest('.workout');
 //   const workouts = JSON.parse(localStorage.getItem('workouts'));
 //   const workout = workouts.find(work => work.id === workoutEl.dataset.id);
+//   console.log(workout);
+
+//   // show the edit form with original data as placeholder text
 //   app._showEditForm();
-//   // console.log(workoutEl);
-//   //console.log(workout.coords);
-//   const distance = +inputDistance.value;
-//   const duration = +inputDuration.value;
-//   const cadence = +inputCadence.value;
-//   const elevationGain = +inputElevation.value;
-//   console.log(distance, duration, cadence, elevationGain);
+//   if (workout.type == 'running') {
+//     editInputType.value = 'running';
+//     editInputDistance.value = workout.distance;
+//     editInputDuration.value = workout.duration;
+//     editInputCadence.value = workout.cadence;
+//   } else if (workout.type == 'cycling') {
+//     editInputType.value = 'cycling';
+//     editInputElevation
+//       .closest('.form__row')
+//       .classList.toggle('form__row--hidden');
+//     editInputCadence
+//       .closest('.form__row')
+//       .classList.toggle('form__row--hidden');
+//     editInputDistance.value = workout.distance;
+//     editInputDuration.value = workout.duration;
+//     editInputElevation.value = workout.elevationGain;
+//   }
 
-// workout.distance = distance;
-// workout.duration = duration;
-// workout.coords = workout.coords;
+//   // get the updated values from edit form
 
-// if (workout.type === 'running') {
-//   workout.cadence = cadence;
-// } else {
-//   workouts.elevationGain = elevationGain;
+//   // when enter key is pressed down, update the values in localStorage
+
+//   // hide the form
+//   // app._hideEditForm();
 // }
 
-// app._hideEditForm();
-//}
+const deleteBtns = document.querySelectorAll('.delete');
+// const editBtns = document.querySelectorAll('.edit');
 
 deleteAllBtn.addEventListener('click', deleteAllWorkouts);
-// deleteBtns.forEach(deleteBtn =>
-//   deleteBtn.addEventListener('click', deleteWorkout)
-// );
-// deleteBtn.addEventListener('click', deleteWorkout);
+deleteBtns.forEach(deleteBtn =>
+  deleteBtn.addEventListener('click', deleteWorkout)
+);
 
-// deleteBtn?.addEventListener('click', function () {
-//   setTimeout(() => deleteWorkout, 3000);
-// });
-
-//editBtns.forEach(editBtn => editBtn.addEventListener('click', editWorkout));
+// editBtns.forEach(editBtn => editBtn.addEventListener('click', editWorkout));
