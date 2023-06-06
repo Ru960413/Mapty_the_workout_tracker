@@ -118,7 +118,7 @@ a:visited {
   font-weight: 800;
 }
 
-/* .form-edit{
+/* .form-edit {
   display: none;
   background-color: var(--color-dark--2);
   border-radius: 5px;
@@ -131,8 +131,7 @@ a:visited {
   /* Match height and activity boxes 
   height: 9.25rem;
   transition: all 0.5s, transform 1ms;
-}
-*/
+} */
 
 .form {
   background-color: var(--color-dark--2);
@@ -249,32 +248,21 @@ a:visited {
   font-size: 1.5rem;
 }
 
-.edit {
-  padding: 5px;
+/* .edit {
   color: #fff;
   background-color: var(--color-dark--1);
-  text-transform: uppercase;
   border: 1px solid #000;
-}
-
-/* .delete {
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
   text-align: center;
-  background-color: red;
-  color: #000;
-  float: right;
-  margin-left: -1.5rem;
 } */
 
 .delete {
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 2.5rem;
+  height: 2.5rem;
   text-align: center;
   background-color: red;
-  color: #000;}
+  color: #000;
+}
 
 .delete_all_inactive {
   display: none;
