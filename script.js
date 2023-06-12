@@ -23,9 +23,10 @@ class Workout {
 
     this.description = `${
       months[this.date.getMonth()]
-    }${this.date.getDate()}日 ${this.date.getHours()}:${this.date.getMinutes()} ${
-      this.name
-    }`;
+    }${this.date.getDate()}日 ${this.date.getHours()}:${this.date
+      .getMinutes()
+      .toString()
+      .padStart(2, 0)} ${this.name}`;
   }
 }
 
@@ -53,7 +54,7 @@ class Running extends Workout {
     )
       .then(res => res.json())
       .then(data => {
-        console.log(data);
+        // console.log(data);
         this.temp_c = data.current.temp_c;
         this.feelsLike_c = data.current.feelslike_c;
         this.humidity = data.current.humidity;
@@ -108,20 +109,25 @@ class Cycling extends Workout {
 // 6. Show weather for workout, using Weather API -> add temperature, humidity and weather (DONE)
 
 const form = document.querySelector('.form');
-const formEdit = document.querySelector('.form-edit');
 const containerWorkouts = document.querySelector('.workouts');
+// const childContainerWorkout = document.querySelector('.workout');
 const inputType = document.querySelector('.form__input--type');
 const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 const deleteAllBtn = document.querySelector('.delete_all_inactive');
+const editBtn = document.querySelector('.edit__btn');
 
 class App {
   #map;
   #mapEvent;
   #mapZoomLevel = 13;
   workouts = [];
+
+  #workoutEdit;
+  #markers = [];
+  #markerCounts = 0;
 
   constructor() {
     // Get user's position
@@ -133,6 +139,7 @@ class App {
     form.addEventListener('submit', this._newWorkOut.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopUp.bind(this));
+    containerWorkouts.addEventListener('click', this._editWorkout.bind(this));
   }
 
   _getPosition() {
@@ -175,12 +182,6 @@ class App {
     inputDistance.focus();
   }
 
-  // _showEditForm(mapE) {
-  //   this.#mapEvent = mapE;
-  //   formEdit.style.display = 'grid';
-  //   inputDistance.focus();
-  // }
-
   _hideForm() {
     // Empty inputs
     inputDistance.value =
@@ -193,17 +194,6 @@ class App {
     setTimeout(() => (form.style.display = 'grid'), 1000);
   }
 
-  // _hideEditForm() {
-  //   // Empty inputs
-  //   inputDistance.value =
-  //     inputDuration.value =
-  //     inputCadence.value =
-  //     inputDuration.value =
-  //       '';
-  //   formEdit.style.display = 'none';
-  //   setTimeout(() => (formEdit.style.display = 'grid'), 1000);
-  // }
-
   _toggleElevationField() {
     inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
     inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
@@ -211,6 +201,8 @@ class App {
 
   _newWorkOut(e) {
     e.preventDefault();
+    editBtn.classList.add('edit__btn');
+    editBtn.classList.remove('edit__btn__active');
     // Get data from form
     const type = inputType.value;
     const distance = +inputDistance.value;
@@ -444,6 +436,93 @@ class App {
       );
     // console.log(cycling, running);
   }
+
+  //// Edit workout
+
+  _displayMarker(workout) {
+    console.log(this.#markers);
+    this.#markers[this.#markerCounts] = L.marker(workout.coords)
+      .addTo(this.#map)
+      .bindPopup(
+        L.popup({
+          autoClose: false,
+          maxWidth: 350,
+          minWidth: 100,
+          closeOnClick: false,
+          className: `${workout.type}-popup`,
+        }).setContent(`${workout.description}`)
+      )
+      .openPopup();
+    this.#markerCounts++;
+  }
+
+  _editWorkout(e) {
+    const workoutEl = e.target.closest('.workout');
+    if (!workoutEl) return;
+    const workout = this.workouts.find(
+      workout => workout.id === workoutEl.dataset.id
+    );
+    form.style.gridTemplateColumns = '1.35fr 1fr';
+    this._showForm(workout);
+    editBtn.classList.remove('edit__btn');
+    editBtn.classList.add('edit__btn__active');
+    this.#workoutEdit = workout;
+    editBtn.addEventListener('click', this._updateInfo.bind(this));
+  }
+  _updateInfo(e) {
+    e.preventDefault();
+    const workoutType = inputType.value;
+    const distance = +inputDistance.value;
+    const duration = +inputDuration.value;
+    let cadence;
+    let elevation;
+    if (workoutType === 'running') {
+      cadence = +inputCadence.value;
+      if (
+        !validInputs(distance, duration, cadence) ||
+        !allPositiveNum(distance, duration, cadence)
+      ) {
+        return alert('請輸入正數');
+      }
+    }
+    if (workoutType === 'cycling') {
+      elevation = +inputElevation.value;
+      if (
+        !validInputs(distance, duration, elevation) ||
+        !allPositiveNum(distance, duration)
+      ) {
+        return alert('請輸入正數');
+      }
+    }
+
+    this.#workoutEdit.type = workoutType;
+    this.#workoutEdit.distance = distance;
+    this.#workoutEdit.duration = duration;
+    if (this.#workoutEdit.type === 'running') {
+      Object.setPrototypeOf(this.#workoutEdit, Running.prototype);
+      this.#workoutEdit.cadence = cadence;
+      this.#workoutEdit.calcPace();
+    }
+    if (this.#workoutEdit.type === 'cycling') {
+      Object.setPrototypeOf(this.#workoutEdit, Cycling.prototype);
+      this.#workoutEdit.elevationGain = elevation;
+      this.#workoutEdit.calcSpeed();
+    }
+    this.#workoutEdit.date = new Date(this.#workoutEdit.date);
+    this.#workoutEdit._setDescription();
+    console.log(this.#workoutEdit);
+    // adding the marker to map again
+    this.#markers.forEach(marker => this.#map.removeLayer(marker));
+    this.#markerCounts--;
+    console.log(this.#markerCounts);
+    this.workouts.forEach(element => {
+      this._displayMarker(element);
+    });
+    this._setLocalStorage();
+    this._hideForm();
+    alert('健身紀錄已成功編輯');
+    location.reload();
+  }
 }
 
 const app = new App();
@@ -465,6 +544,10 @@ function deleteAllWorkouts() {
 }
 
 function deleteWorkout(e) {
+  if (e.target.classList.contains('delete')) {
+    form.style.display = 'none';
+  }
+
   if (confirm('您確定要刪除此健身紀錄嗎？')) {
     const workoutEl = e.target.closest('.workout');
     let workouts = JSON.parse(localStorage.getItem('workouts'));
@@ -478,60 +561,9 @@ function deleteWorkout(e) {
   }
 }
 
-// const editInputType = document.querySelector('.edit__form__input--type');
-// const editInputDistance = document.querySelector(
-//   '.edit__form__input--distance'
-// );
-// const editInputDuration = document.querySelector(
-//   '.edit__form__input--duration'
-// );
-// const editInputCadence = document.querySelector('.edit__form__input--cadence');
-// const editInputElevation = document.querySelector(
-//   '.edit__form__input--elevation'
-// );
-
-// function editWorkout(e) {
-//   e.preventDefault();
-//   // find the data-id of the closest workout element
-//   const workoutEl = e.target.closest('.workout');
-//   const workouts = JSON.parse(localStorage.getItem('workouts'));
-//   const workout = workouts.find(work => work.id === workoutEl.dataset.id);
-//   console.log(workout);
-
-//   // show the edit form with original data as placeholder text
-//   app._showEditForm();
-//   if (workout.type == 'running') {
-//     editInputType.value = 'running';
-//     editInputDistance.value = workout.distance;
-//     editInputDuration.value = workout.duration;
-//     editInputCadence.value = workout.cadence;
-//   } else if (workout.type == 'cycling') {
-//     editInputType.value = 'cycling';
-//     editInputElevation
-//       .closest('.form__row')
-//       .classList.toggle('form__row--hidden');
-//     editInputCadence
-//       .closest('.form__row')
-//       .classList.toggle('form__row--hidden');
-//     editInputDistance.value = workout.distance;
-//     editInputDuration.value = workout.duration;
-//     editInputElevation.value = workout.elevationGain;
-//   }
-
-//   // get the updated values from edit form
-
-//   // when enter key is pressed down, update the values in localStorage
-
-//   // hide the form
-//   // app._hideEditForm();
-// }
-
 const deleteBtns = document.querySelectorAll('.delete');
-// const editBtns = document.querySelectorAll('.edit');
 
 deleteAllBtn.addEventListener('click', deleteAllWorkouts);
 deleteBtns.forEach(deleteBtn =>
   deleteBtn.addEventListener('click', deleteWorkout)
 );
-
-// editBtns.forEach(editBtn => editBtn.addEventListener('click', editWorkout));
