@@ -182,6 +182,26 @@ class App {
     inputDistance.focus();
   }
 
+  _showEditForm(mapE) {
+    this.#mapEvent = mapE;
+    // console.log(mapE.type);
+    form.classList.remove('hidden');
+    inputDistance.focus();
+    inputType.value = mapE.type;
+    inputDistance.value = mapE.distance;
+    inputDuration.value = mapE.duration;
+    if (mapE.type === 'running') {
+      inputCadence.value = mapE.cadence;
+    } else if (mapE.type === 'cycling') {
+      // inputElevation
+      //   .closest('.form__row')
+      //   .classList.toggle('form__row--hidden');
+      // inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
+      this._toggleElevationField();
+      inputElevation.value = mapE.elevationGain;
+    }
+  }
+
   _hideForm() {
     // Empty inputs
     inputDistance.value =
@@ -463,7 +483,7 @@ class App {
       workout => workout.id === workoutEl.dataset.id
     );
     form.style.gridTemplateColumns = '1.35fr 1fr';
-    this._showForm(workout);
+    this._showEditForm(workout);
     editBtn.classList.remove('edit__btn');
     editBtn.classList.add('edit__btn__active');
     this.#workoutEdit = workout;
