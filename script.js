@@ -193,10 +193,6 @@ class App {
     if (mapE.type === 'running') {
       inputCadence.value = mapE.cadence;
     } else if (mapE.type === 'cycling') {
-      // inputElevation
-      //   .closest('.form__row')
-      //   .classList.toggle('form__row--hidden');
-      // inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
       this._toggleElevationField();
       inputElevation.value = mapE.elevationGain;
     }
