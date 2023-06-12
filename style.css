@@ -239,7 +239,6 @@ a:visited {
   border-left: 5px solid var(--color-brand--1);
 }
 
-.edit,
 .delete {
   margin-left: 15px;
   border-radius: 5px;
@@ -248,13 +247,27 @@ a:visited {
   font-size: 1.5rem;
 }
 
-/* .edit {
-  color: #fff;
-  background-color: var(--color-dark--1);
-  border: 1px solid #000;
-  text-align: center;
-} */
+.edit__btn {
+  display: none;
+}
+.edit__btn__container {
+  text-align: right;
+  padding: 0;
+  grid-column: 3 / 4;
+  grid-row: 1 / 2;
+}
 
+.edit__btn__active {
+  background-color: lightgray;
+  border: 0.2rem solid #000;
+  text-align: center;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.5rem;
+  width: 5rem;
+  padding: 0.35rem;
+}
 .delete {
   border-radius: 50%;
   width: 2.5rem;
