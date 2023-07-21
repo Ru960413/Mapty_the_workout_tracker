@@ -6,6 +6,7 @@
     - [Project 介紹](#project-介紹)
     - [動機及 project 設計](#動機及-project-設計)
     - [Project 重點](#project-重點)
+  - [Project Introduction](#project-introduction)
 
 ## Website
 
@@ -45,3 +46,9 @@
 3. 編輯健身紀錄
 
 ![編輯健身紀錄](for_readme/edit.png '編輯健身紀錄')
+
+## Project Introduction
+
+This is a workout tracker built with HTML, CSS, JavaScript, leaflet API, JavaScript's localStorage API, and weather API.
+
+It allows users to click on the map on the right side of the website to add a workout (running or cycling) using its form. After submitting the workout, the workout will then show as a list below the form. User can also edit workout by clicking the workout, delete workout by clicking the delete button and delete all workouts by clicking the button bellow the list.
